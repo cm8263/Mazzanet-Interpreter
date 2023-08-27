@@ -4,11 +4,13 @@ class Page {
 	nature: Nature;
 	capcode: string;
 	timestamp: Date;
+	localTimestamp: string;
 	message: string;
 
 	constructor(capcode: string, timestamp: string, message: string) {
 		this.capcode = capcode;
 		this.timestamp = new Date(timestamp);
+		this.localTimestamp = this.timestamp.toLocaleString("en-AU");
 		this.message = message;
 
 		let stripAmount = 2;
@@ -30,6 +32,10 @@ class Page {
 
 	public checkCapcode(capcodes: string[]): boolean {
 		return capcodes.includes(this.capcode);
+	}
+
+	public equals(comparison: Page) {
+		return comparison !== undefined && this.capcode === comparison.capcode && this.message === comparison.message;
 	}
 }
 

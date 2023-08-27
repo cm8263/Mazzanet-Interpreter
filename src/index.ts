@@ -5,12 +5,12 @@ import * as dotenv from "dotenv";
 
 dotenv.config({ path: process.cwd() + "/.env" });
 
-const endpoint = "https://mazzanet.net.au/cfa/pager-cfa-all.php";
+let recentPages: Page[] = [];
 
 const getRecentPagerMessages = async (): Promise<Page[]> => {
 	let html;
 
-	await axios.get(endpoint)
+	await axios.get(process.env.ENDPOINT)
 		.then(res => {
 			html = res.data;
 		})
@@ -55,15 +55,26 @@ const getPagerMessagesByCapcodes = async (capcodes: string[]): Promise<Page[]> =
 const getCapcodes = (): string[] => {
 	const rawCapcodes = process.env.CAPCODES;
 
-	console.log(rawCapcodes);
-
 	return rawCapcodes.split(";");
 }
 
 const main = async () => {
 	const pages = await getPagerMessagesByCapcodes(getCapcodes());
 
-	console.log(pages);
+	if (recentPages.length === 0) {
+		console.log("First run, skipping comparison.");
+	} else {
+		if (pages[0] !== undefined && pages[0].equals(recentPages[0])){
+			console.log("No changes.")
+		} else {
+			console.info("New changes!");
+		}
+	}
+
+	recentPages = pages;
+
+	console.info(`${recentPages.length} recent page messages found!`);
 }
 
 main().finally();
+setInterval(() => main().finally(), 60 * 1000);
