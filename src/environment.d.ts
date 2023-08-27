@@ -3,6 +3,7 @@ declare global {
 		interface ProcessEnv {
 			CAPCODES: string;
 			ENDPOINT: string;
+			BOT_ENDPOINT: string;
 		}
 	}
 }

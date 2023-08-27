@@ -74,6 +74,16 @@ const main = async () => {
 	recentPages = pages;
 
 	console.info(`${recentPages.length} recent page messages found!`);
+
+	await axios.get(`${process.env.BOT_ENDPOINT}${recentPages[0].message}`)
+		.then(res => {
+			console.log("Broadcasted");
+		})
+		.catch((error: AxiosError) => {
+			console.error(`There was an error with ${error.config?.url}.`);
+			console.error(error.toJSON());
+			return [];
+		});
 }
 
 main().finally();
