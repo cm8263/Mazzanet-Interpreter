@@ -4,6 +4,7 @@ declare global {
 			CAPCODES: string;
 			ENDPOINT: string;
 			BOT_ENDPOINT: string;
+			BOT_TOKEN: string;
 		}
 	}
 }
