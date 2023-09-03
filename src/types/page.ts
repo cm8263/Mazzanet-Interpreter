@@ -7,15 +7,12 @@ class Page {
 	localTimestamp: string;
 	message: string;
 
-	constructor(capcode: string, timestamp: string, message: string) {
-		this.capcode = capcode;
-		this.timestamp = new Date(timestamp);
-		this.localTimestamp = this.timestamp.toLocaleString("en-AU");
+	constructor(message: string, capcode: string, timestamp: string) {
 		this.message = message;
 
 		let stripAmount = 2;
 
-		if (message.startsWith("@@ALERT")){
+		if (message.startsWith("@@ALERT")) {
 			this.nature = Nature.Emergency;
 
 			stripAmount = 8;
@@ -28,6 +25,9 @@ class Page {
 		}
 
 		this.message = this.message.substring(stripAmount);
+		this.capcode = capcode as string;
+		this.timestamp = new Date(timestamp as string);
+		this.localTimestamp = this.timestamp.toLocaleString("en-AU");
 	}
 
 	public checkCapcode(capcodes: string[]): boolean {

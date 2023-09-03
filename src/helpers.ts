@@ -1,8 +1,8 @@
-import {Page} from "./types/components/page";
+import {Page} from "./types/page";
 import axios, {AxiosError} from "axios";
 import {JSDOM} from "jsdom";
-import {ConsoleType} from "./types/components/consoleType";
-import {Nature} from "./types/components/nature";
+import {ConsoleType} from "./types/consoleType";
+import {ExternalPage} from "./types/externalPage";
 
 const consoleMessage = (message: any, type: ConsoleType = ConsoleType.Log) => {
 	message = `${new Date().toLocaleString("en-AU")} // ${message}`;
@@ -30,7 +30,7 @@ const consoleMessage = (message: any, type: ConsoleType = ConsoleType.Log) => {
 const getRecentPagerMessages = async (): Promise<Page[]> => {
 	let html;
 
-	await axios.get(process.env.ENDPOINT)
+	await axios.get(`${process.env.ALL_ENDPOINT}${process.env.ALL_ENDPOINT}`)
 		.then(res => {
 			html = res.data;
 		})
@@ -49,9 +49,9 @@ const getRecentPagerMessages = async (): Promise<Page[]> => {
 		const cells = entry.cells;
 
 		pages.push(new Page(
+			cells[2].textContent as string,
 			cells[0].textContent as string,
-			cells[1].textContent as string,
-			cells[2].textContent as string
+			cells[1].textContent as string
 		));
 	}
 
@@ -78,6 +78,27 @@ const getCapcodes = (): string[] => {
 	return rawCapcodes.split(";");
 }
 
+const getLatestPagerMessageByStation = async (station: string, district: string): Promise<ExternalPage> => {
+	let html;
+
+	await axios.get(`${process.env.ENDPOINT}${process.env.STATION_ENDPOINT}&filter=${station}&reg=${district}`)
+		.then(res => {
+			html = res.data;
+		})
+		.catch((error: AxiosError) => {
+			console.error(`There was an error with ${error.config?.url}.`);
+			console.error(error.toJSON());
+			return [];
+		});
+
+	const dom = new JSDOM(html);
+
+	const alert = Array.from(dom.window.document.querySelectorAll("strong"))[0];
+	const mapUrl = dom.window.document.querySelector("img");
+
+	return new ExternalPage(alert.textContent as string, mapUrl?.src as string);
+}
+
 const broadcast = async (page: Page) => {
 	await axios.post(process.env.BOT_ENDPOINT, {
 		token: process.env.BOT_TOKEN,
@@ -97,4 +118,4 @@ const broadcast = async (page: Page) => {
 		});
 }
 
-export {consoleMessage, getRecentPagerMessages, getPagerMessagesByCapcodes, getCapcodes, broadcast}
+export {consoleMessage, getRecentPagerMessages, getPagerMessagesByCapcodes, getCapcodes, getLatestPagerMessageByStation, broadcast}
