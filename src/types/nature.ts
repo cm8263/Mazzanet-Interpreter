@@ -5,4 +5,4 @@ enum Nature {
 	Invalid
 }
 
-export {Nature}
+export {Nature};

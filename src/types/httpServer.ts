@@ -48,31 +48,32 @@ class HttpServer {
 			}
 
 			switch (url.pathname) {
-			case "/checkStation":
-				const station = data["station"] as string | undefined;
-				const district = data["district"] as string | undefined;
+				case "/checkStation": {
+					const station = data["station"] as string | undefined;
+					const district = data["district"] as string | undefined;
 
-				if (station === undefined || district === undefined) {
-					this.badRequest(response);
-					return;
+					if (station === undefined || district === undefined) {
+						this.badRequest(response);
+						return;
+					}
+					const page = await getLatestPagerMessageByStation(station, district);
+
+					const mapUrl = new URL(`${process.env.ENDPOINT}${page.mapUrl}`);
+
+					mapUrl.searchParams.set("zoom", "13");
+
+					page.mapUrl = mapUrl.toString();
+
+					response.writeHead(200, {
+						"Content-Type": "application/json"
+					});
+					response.end(JSON.stringify(page));
+					break;
 				}
-				const page = await getLatestPagerMessageByStation(station, district);
 
-				const mapUrl = new URL(`${process.env.ENDPOINT}${page.mapUrl}`);
-
-				mapUrl.searchParams.set("zoom", "13");
-
-				page.mapUrl = mapUrl.toString();
-
-				response.writeHead(200, {
-					"Content-Type": "application/json"
-				});
-				response.end(JSON.stringify(page));
-				break;
-
-			default:
-				this.badRequest(response);
-				break;
+				default:
+					this.badRequest(response);
+					break;
 			}
 		});
 	};

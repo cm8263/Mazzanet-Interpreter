@@ -39,4 +39,4 @@ class Page {
 	}
 }
 
-export {Page}
+export {Page};

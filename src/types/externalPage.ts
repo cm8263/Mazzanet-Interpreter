@@ -18,4 +18,4 @@ class ExternalPage {
 	}
 }
 
-export {ExternalPage}
+export {ExternalPage};

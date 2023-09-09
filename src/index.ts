@@ -1,17 +1,17 @@
-import {Page} from "./types/page";
+// import {Page} from "./types/page";
 import * as dotenv from "dotenv";
-import {
-	broadcast,
-	consoleMessage,
-	getCapcodes,
-	getPagerMessagesByCapcodes
-} from "./helpers";
-import {ConsoleType} from "./types/consoleType";
+// import {
+// 	broadcast,
+// 	consoleMessage,
+// 	getCapcodes,
+// 	getPagerMessagesByCapcodes
+// } from "./helpers";
+// import {ConsoleType} from "./types/consoleType";
 import {HttpServer} from "./types/httpServer";
 
 dotenv.config({ path: process.cwd() + "/.env" });
 
-let recentPages: Page[] = [];
+// let recentPages: Page[] = [];
 
 // const main = async () => {
 // 	const pages = await getPagerMessagesByCapcodes(getCapcodes());

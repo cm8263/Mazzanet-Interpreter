@@ -4,7 +4,7 @@ import {JSDOM} from "jsdom";
 import {ConsoleType} from "./types/consoleType";
 import {ExternalPage} from "./types/externalPage";
 
-const consoleMessage = (message: any, type: ConsoleType = ConsoleType.Log) => {
+const consoleMessage = (message: string, type: ConsoleType = ConsoleType.Log) => {
 	message = `${new Date().toLocaleString("en-AU")} // ${message}`;
 
 	switch (type) {
@@ -25,7 +25,7 @@ const consoleMessage = (message: any, type: ConsoleType = ConsoleType.Log) => {
 			break;
 
 	}
-}
+};
 
 const getRecentPagerMessages = async (): Promise<Page[]> => {
 	let html;
@@ -43,7 +43,7 @@ const getRecentPagerMessages = async (): Promise<Page[]> => {
 	const dom = new JSDOM(html);
 	const tableEntries = Array.from(dom.window.document.querySelectorAll("tr"));
 
-	let pages = [];
+	const pages = [];
 
 	for (const entry of tableEntries) {
 		const cells = entry.cells;
@@ -56,12 +56,12 @@ const getRecentPagerMessages = async (): Promise<Page[]> => {
 	}
 
 	return pages;
-}
+};
 
 const getPagerMessagesByCapcodes = async (capcodes: string[]): Promise<Page[]> => {
 	const recentPages = await getRecentPagerMessages();
 
-	let pages: Page[] = [];
+	const pages: Page[] = [];
 
 	for (const page of recentPages) {
 		if (!page.checkCapcode(capcodes)) continue;
@@ -70,13 +70,13 @@ const getPagerMessagesByCapcodes = async (capcodes: string[]): Promise<Page[]> =
 	}
 
 	return pages;
-}
+};
 
 const getCapcodes = (): string[] => {
 	const rawCapcodes = process.env.CAPCODES;
 
 	return rawCapcodes.split(";");
-}
+};
 
 const getLatestPagerMessageByStation = async (station: string, district: string): Promise<ExternalPage> => {
 	let html;
@@ -97,7 +97,7 @@ const getLatestPagerMessageByStation = async (station: string, district: string)
 	const mapUrl = dom.window.document.querySelector("img");
 
 	return new ExternalPage(alert.textContent as string, mapUrl?.src as string);
-}
+};
 
 const broadcast = async (page: Page) => {
 	await axios.post(process.env.BOT_ENDPOINT, {
@@ -108,14 +108,14 @@ const broadcast = async (page: Page) => {
 			"Content-Type": "application/x-www-form-urlencoded"
 		}
 	})
-		.then(_ => {
+		.then(() => {
 			consoleMessage("Broadcasted", ConsoleType.Info);
 		})
 		.catch((error: AxiosError) => {
 			consoleMessage(`There was an error with ${error.config?.url}.`, ConsoleType.Error);
-			consoleMessage(error, ConsoleType.Error);
+			console.log(error);
 			return [];
 		});
-}
+};
 
-export {consoleMessage, getRecentPagerMessages, getPagerMessagesByCapcodes, getCapcodes, getLatestPagerMessageByStation, broadcast}
+export {consoleMessage, getRecentPagerMessages, getPagerMessagesByCapcodes, getCapcodes, getLatestPagerMessageByStation, broadcast};
